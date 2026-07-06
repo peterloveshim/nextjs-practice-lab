@@ -1,26 +1,184 @@
 @import "tailwindcss";
 
+/* next-themes(class 전략) 용 다크 변형 */
+@custom-variant dark (&:is(.dark *));
+
 :root {
+  /* ── shadcn 시맨틱 토큰 (컴포넌트가 참조) ── */
+  --background: #ffffff; /* canvas */
+  --foreground: #222222; /* ink */
+  --card: #ffffff;
+  --card-foreground: #222222;
+  --popover: #ffffff;
+  --popover-foreground: #222222;
+  --primary: #3d5af0; /* 코발트 블루 */
+  --primary-foreground: #ffffff;
+  --secondary: #f7f7f7; /* surface-soft */
+  --secondary-foreground: #222222;
+  --muted: #f7f7f7;
+  --muted-foreground: #6a6a6a; /* muted */
+  --accent: #f2f2f2; /* surface-strong */
+  --accent-foreground: #222222;
+  --destructive: #c2410c; /* error-text */
+  --destructive-foreground: #ffffff;
+  --border: #dddddd; /* hairline */
+  --input: #dddddd;
+  --ring: #222222; /* focus outline 2px #222 */
+
+  /* ── 에어비앤비 전용 컬러 (raw) ── */
+  --primary-active: #2a41d4; /* 누름 상태 */
+  --primary-disabled: #cbd3fc; /* 비활성 CTA */
+  --legal-link: #428bff;
+  --luxe: #460479;
+  --plus: #92174d;
+  --body: #3f3f3f; /* 장문 본문 */
+  --muted-soft: #929292; /* 비활성 링크 */
+  --surface-soft: #f7f7f7;
+  --surface-strong: #f2f2f2;
+  --hairline: #dddddd;
+  --hairline-soft: #ebebeb; /* 약한 구분선 */
+  --border-strong: #c1c1c1; /* 비활성 아웃라인 */
+
+  --radius: 8px;
+}
+
+/* 지금은 라이트와 동일한 값 — 다크 팔레트는 추후 반영 */
+.dark {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #222222;
+  --card: #ffffff;
+  --card-foreground: #222222;
+  --popover: #ffffff;
+  --popover-foreground: #222222;
+  --primary: #3d5af0;
+  --primary-foreground: #ffffff;
+  --secondary: #f7f7f7;
+  --secondary-foreground: #222222;
+  --muted: #f7f7f7;
+  --muted-foreground: #6a6a6a;
+  --accent: #f2f2f2;
+  --accent-foreground: #222222;
+  --destructive: #c2410c;
+  --destructive-foreground: #ffffff;
+  --border: #dddddd;
+  --input: #dddddd;
+  --ring: #222222;
+
+  --primary-active: #2a41d4;
+  --primary-disabled: #cbd3fc;
+  --legal-link: #428bff;
+  --luxe: #460479;
+  --plus: #92174d;
+  --body: #3f3f3f;
+  --muted-soft: #929292;
+  --surface-soft: #f7f7f7;
+  --surface-strong: #f2f2f2;
+  --hairline: #dddddd;
+  --hairline-soft: #ebebeb;
+  --border-strong: #c1c1c1;
 }
 
 @theme inline {
+  /* 색상 → 유틸리티 (bg-*, text-*, border-* 자동 생성) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary-active: var(--primary-active);
+  --color-primary-disabled: var(--primary-disabled);
+  --color-legal-link: var(--legal-link);
+  --color-luxe: var(--luxe);
+  --color-plus: var(--plus);
+  --color-body: var(--body);
+  --color-muted-soft: var(--muted-soft);
+  --color-surface-soft: var(--surface-soft);
+  --color-surface-strong: var(--surface-strong);
+  --color-hairline: var(--hairline);
+  --color-hairline-soft: var(--hairline-soft);
+  --color-border-strong: var(--border-strong);
+
+  /* ── 라디우스 (rounded-sm/md/lg, full은 내장) ── */
+  --radius-sm: 8px; /* 버튼·인풋 */
+  --radius-md: 14px; /* 카드 */
+  --radius-lg: 20px;
+
+  /* ── 엘리베이션 (단일 티어) ── */
+  --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.12); /* card float · 값 추정, 조정 가능 */
+
+  /* ── 타이포그래피 (text-* 유틸리티) ── */
+  --text-rating-display: 64px;
+  --text-rating-display--line-height: 1.1;
+  --text-rating-display--letter-spacing: -1px;
+  --text-rating-display--font-weight: 700;
+
+  --text-display-xl: 28px;
+  --text-display-xl--line-height: 1.43;
+  --text-display-xl--font-weight: 700;
+
+  --text-display-lg: 22px;
+  --text-display-lg--line-height: 1.18;
+  --text-display-lg--letter-spacing: -0.44px;
+  --text-display-lg--font-weight: 500;
+
+  --text-display-md: 21px;
+  --text-display-md--line-height: 1.43;
+  --text-display-md--font-weight: 700;
+
+  --text-display-sm: 20px;
+  --text-display-sm--line-height: 1.2;
+  --text-display-sm--letter-spacing: -0.18px;
+  --text-display-sm--font-weight: 600;
+
+  --text-title-md: 16px;
+  --text-title-md--line-height: 1.25;
+  --text-title-md--font-weight: 600;
+
+  --text-title-sm: 16px;
+  --text-title-sm--line-height: 1.25;
+  --text-title-sm--font-weight: 500;
+
+  --text-body-md: 16px;
+  --text-body-md--line-height: 1.5;
+  --text-body-md--font-weight: 400;
+
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 1.43;
+  --text-body-sm--font-weight: 400;
+
+  --text-caption: 14px;
+  --text-caption--line-height: 1.29;
+  --text-caption--font-weight: 500;
+
+  --text-caption-sm: 13px;
+  --text-caption-sm--line-height: 1.23;
+  --text-caption-sm--font-weight: 400;
+
+  --text-badge: 11px;
+  --text-badge--line-height: 1.2;
+  --text-badge--font-weight: 600;
+
+  --text-tag: 8px; /* New 등 태그 · uppercase 는 내장 유틸리티와 조합 */
+  --text-tag--letter-spacing: 0.32px;
+  --text-tag--font-weight: 700;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }

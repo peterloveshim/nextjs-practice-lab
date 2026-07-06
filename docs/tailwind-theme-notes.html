@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tailwind v4 테마 시스템 학습 노트</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1f2328;
+    --muted: #6a737d;
+    --card: #f9fafb;
+    --border: #e5e7eb;
+    --accent: #3d5af0;
+    --accent-soft: #eef1fe;
+    --code-bg: #f6f8fa;
+    --code-fg: #24292f;
+    --kw: #cf222e;      /* keyword / at-rule */
+    --var: #0550ae;     /* css var */
+    --val: #116329;     /* value */
+    --comment: #6a737d;
+    --good: #1a7f37;
+    --warn: #9a6700;
+    --warn-bg: #fff8e1;
+    --good-bg: #eaf6ec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --fg: #e6edf3;
+      --muted: #8b949e;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #6b83ff;
+      --accent-soft: #1a2140;
+      --code-bg: #161b22;
+      --code-fg: #e6edf3;
+      --kw: #ff7b72;
+      --var: #79c0ff;
+      --val: #7ee787;
+      --comment: #8b949e;
+      --good: #56d364;
+      --warn: #e3b341;
+      --warn-bg: #2b2512;
+      --good-bg: #12261a;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+                 "Noto Sans KR", Roboto, sans-serif;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 3rem 1.25rem 6rem; }
+
+  header.hero {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+  header.hero .eyebrow {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: .8rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin: 0 0 .5rem;
+  }
+  header.hero h1 { font-size: 2rem; margin: 0 0 .5rem; line-height: 1.25; }
+  header.hero p { color: var(--muted); margin: .25rem 0 0; }
+
+  nav.toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 3rem;
+  }
+  nav.toc h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--muted); margin: 0 0 .75rem; }
+  nav.toc ol { margin: 0; padding-left: 1.25rem; }
+  nav.toc li { margin: .35rem 0; }
+  nav.toc a { color: var(--fg); text-decoration: none; }
+  nav.toc a:hover { color: var(--accent); text-decoration: underline; }
+
+  section { margin-bottom: 3.25rem; scroll-margin-top: 1.5rem; }
+  section > h2 {
+    font-size: 1.4rem;
+    margin: 0 0 1rem;
+    padding-top: .5rem;
+  }
+  section > h2 .num {
+    display: inline-block;
+    min-width: 1.9rem; height: 1.9rem; line-height: 1.9rem;
+    text-align: center;
+    background: var(--accent); color: #fff;
+    border-radius: 8px;
+    font-size: .95rem;
+    margin-right: .6rem;
+    vertical-align: middle;
+  }
+  h3 { font-size: 1.05rem; margin: 1.75rem 0 .6rem; }
+  p { margin: .75rem 0; }
+
+  code.inline {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: .1em .4em;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: .88em;
+  }
+
+  pre {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.15rem;
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: .85rem;
+    line-height: 1.6;
+    margin: 1rem 0;
+  }
+  pre .c { color: var(--comment); font-style: italic; }
+  pre .k { color: var(--kw); }
+  pre .v { color: var(--var); }
+  pre .s { color: var(--val); }
+
+  .flow {
+    display: flex; flex-wrap: wrap; align-items: stretch; gap: .5rem;
+    margin: 1.25rem 0;
+  }
+  .flow .step {
+    flex: 1 1 160px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: .85rem 1rem;
+  }
+  .flow .step .lbl { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--accent); font-weight: 700; }
+  .flow .step code { font-size: .82rem; word-break: break-all; }
+  .flow .arrow { align-self: center; color: var(--muted); font-size: 1.4rem; }
+
+  .callout {
+    border-radius: 10px;
+    padding: 1rem 1.15rem;
+    margin: 1.25rem 0;
+    border: 1px solid var(--border);
+  }
+  .callout.key   { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+  .callout.good  { background: var(--good-bg); border-color: color-mix(in srgb, var(--good) 35%, transparent); }
+  .callout.warn  { background: var(--warn-bg); border-color: color-mix(in srgb, var(--warn) 40%, transparent); }
+  .callout .tag  { font-weight: 700; font-size: .8rem; letter-spacing: .03em; display: block; margin-bottom: .3rem; }
+  .callout.key .tag  { color: var(--accent); }
+  .callout.good .tag { color: var(--good); }
+  .callout.warn .tag { color: var(--warn); }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout p:first-of-type { margin-top: 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.25rem 0;
+    font-size: .9rem;
+    display: block;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: .6rem .8rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--card); font-weight: 600; white-space: nowrap; }
+  td code { font-size: .82em; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+  @media (max-width: 620px) { .grid2 { grid-template-columns: 1fr; } }
+  .grid2 .col h4 { margin: 0 0 .4rem; font-size: .9rem; }
+  .grid2 .col.bad h4 { color: var(--kw); }
+  .grid2 .col.ok h4 { color: var(--good); }
+
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 4rem; padding-top: 1.5rem;
+    color: var(--muted); font-size: .85rem;
+  }
+  .swatch { display:inline-block; width:.85em; height:.85em; border-radius:3px;
+    border:1px solid var(--border); vertical-align:-1px; margin-right:.35em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Next.js Practice Lab · 학습 노트</p>
+    <h1>Tailwind CSS v4 테마 시스템 파헤치기</h1>
+    <p><code class="inline">globals.css</code> 의 <code class="inline">@theme</code> 가
+       어떻게 <code class="inline">bg-surface-strong</code> 같은 유틸리티를 만들어내는지,
+       그리고 다크 모드·디자인 토큰 계층까지 — 이번 세션에서 다룬 내용을 정리했습니다.</p>
+  </header>
+
+  <nav class="toc">
+    <h2>목차</h2>
+    <ol>
+      <li><a href="#s1">유틸리티 클래스는 어디서 정의되나</a></li>
+      <li><a href="#s2"><code>--surface-strong</code> → <code>bg-surface-strong</code> 3단계</a></li>
+      <li><a href="#s3"><code>@theme</code> 문법</a></li>
+      <li><a href="#s4"><code>inline</code> 이 막는 것 — <code>:root</code> 내보내기</a></li>
+      <li><a href="#s5"><code>inline</code> 없이 다크 테마 + 이중 <code>var()</code> 회피</a></li>
+      <li><a href="#s6">팔레트 / 시맨틱 2계층</a></li>
+      <li><a href="#s7">한눈에 보는 요약</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1 -->
+  <section id="s1">
+    <h2><span class="num">1</span>유틸리티 클래스는 어디서 정의되나</h2>
+    <p><code class="inline">bg-surface-strong</code> 같은 커스텀 유틸리티는
+       별도 config 파일이 아니라 <strong>Tailwind v4 방식대로 CSS 안</strong>,
+       즉 <code class="inline">src/app/globals.css</code> 한 곳에서 만들어집니다.
+       핵심은 <code class="inline">@theme</code> 블록입니다.</p>
+    <p>동작은 세 곳으로 나뉩니다:</p>
+    <table>
+      <tr><th>역할</th><th>위치 (globals.css)</th><th>내용</th></tr>
+      <tr><td>원본 색 값</td><td><code>:root</code> / <code>.dark</code></td><td><code>--surface-strong: #f2f2f2;</code></td></tr>
+      <tr><td><strong>유틸리티 생성</strong></td><td><code>@theme inline</code></td><td><code>--color-surface-strong: var(--surface-strong);</code></td></tr>
+      <tr><td>실제 사용</td><td>컴포넌트 <code>className</code></td><td><code>&lt;div class="bg-surface-strong"&gt;</code></td></tr>
+    </table>
+    <div class="callout key">
+      <span class="tag">KEY</span>
+      <p>Tailwind v4 는 <code class="inline">@theme</code> 안의
+         <code class="inline">--color-*</code> 변수를 스캔해서
+         <code class="inline">bg-*</code>, <code class="inline">text-*</code>,
+         <code class="inline">border-*</code> 유틸리티를 <strong>자동 생성</strong>합니다.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="s2">
+    <h2><span class="num">2</span><code>--surface-strong</code> → <code>bg-surface-strong</code> 3단계</h2>
+
+    <h3>① 순수 색 값 선언</h3>
+<pre><span class="v">:root</span> {
+  <span class="v">--surface-strong</span>: <span class="s">#f2f2f2</span>;   <span class="c">/* globals.css:37 */</span>
+}
+<span class="v">.dark</span> {
+  <span class="v">--surface-strong</span>: <span class="s">#f2f2f2</span>;   <span class="c">/* 다크모드용 재정의 */</span>
+}</pre>
+    <p>여기까지는 그냥 CSS 변수입니다. 이 상태로는 Tailwind 가 모르므로
+       <code class="inline">bg-surface-strong</code> 은 아직 존재하지 않습니다.</p>
+
+    <h3>② <code>@theme</code> 에 색상 토큰으로 등록 (핵심)</h3>
+<pre><span class="k">@theme</span> inline {
+  <span class="v">--color-surface-strong</span>: <span class="k">var</span>(<span class="v">--surface-strong</span>);   <span class="c">/* 이 줄이 유틸리티를 만든다 */</span>
+}</pre>
+    <p>접두어 <code class="inline">--color-</code> 를 떼고 남은 이름
+       <code class="inline">surface-strong</code> 이 색상 팔레트 항목으로 등록되고,
+       그에 대한 색 계열 유틸리티가 자동으로 딸려 나옵니다.</p>
+
+    <h3>③ 최종 참조 체인</h3>
+    <div class="flow">
+      <div class="step"><span class="lbl">유틸리티</span><br><code>bg-surface-strong</code></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="lbl">@theme 매핑</span><br><code>var(--surface-strong)</code></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="lbl">:root 값</span><br><code>#f2f2f2</code></div>
+    </div>
+    <p>같은 이름으로 <code class="inline">text-surface-strong</code>,
+       <code class="inline">border-surface-strong</code> 등도 함께 사용 가능해집니다.</p>
+  </section>
+
+  <!-- 3 -->
+  <section id="s3">
+    <h2><span class="num">3</span><code>@theme</code> 문법</h2>
+    <p><code class="inline">@theme</code> 는 Tailwind v4 에서 도입된 at-rule 로,
+       v3 의 <code class="inline">tailwind.config.js</code> 의
+       <code class="inline">theme: {}</code> 를 CSS 안으로 옮겨온 것입니다.
+       블록 안 변수는 <strong>정해진 네임스페이스 접두어</strong>로 시작해야 하고,
+       그 접두어가 어떤 종류의 유틸리티를 만들지 결정합니다.</p>
+    <table>
+      <tr><th>접두어</th><th>등록 대상</th><th>생성 유틸리티</th></tr>
+      <tr><td><code>--color-*</code></td><td>색상 팔레트</td><td><code>bg-*</code>, <code>text-*</code>, <code>border-*</code>, <code>ring-*</code>…</td></tr>
+      <tr><td><code>--font-*</code></td><td>폰트 패밀리</td><td><code>font-*</code></td></tr>
+      <tr><td><code>--spacing-*</code></td><td>간격</td><td><code>p-*</code>, <code>m-*</code>, <code>gap-*</code></td></tr>
+      <tr><td><code>--radius-*</code></td><td>모서리 반경</td><td><code>rounded-*</code></td></tr>
+      <tr><td><code>--shadow-*</code></td><td>그림자</td><td><code>shadow-*</code></td></tr>
+      <tr><td><code>--text-*</code></td><td>타이포그래피</td><td><code>text-*</code> (크기+행간+굵기)</td></tr>
+      <tr><td><code>--breakpoint-*</code></td><td>반응형</td><td><code>sm:</code>, <code>md:</code>… 변형</td></tr>
+    </table>
+    <p>그래서 이 프로젝트의 <code class="inline">--radius-sm/md/lg</code> 는
+       <code class="inline">rounded-sm/md/lg</code> 를,
+       <code class="inline">--text-display-xl</code> 등은 그 이름의 텍스트 유틸리티를 만듭니다.</p>
+    <div class="callout key">
+      <span class="tag">KEY</span>
+      <p><code class="inline">@theme</code> 는 유틸리티 생성 <em>더하기</em>,
+         등록한 변수를 <strong>실제 <code>:root</code> CSS 변수로도 내보냅니다</strong>.
+         → 유틸리티를 안 써도 <code class="inline">var(--color-...)</code> 로 직접 참조 가능.
+         바로 이 "내보내기"를 <code class="inline">inline</code> 이 끕니다. (다음 절)</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section id="s4">
+    <h2><span class="num">4</span><code>inline</code> 이 막는 것 — <code>:root</code> 내보내기</h2>
+    <p><code class="inline">inline</code> 은 옵션 수식어로,
+       "토큰 변수를 <code class="inline">:root</code> 에 내보내지 말고
+       그 <strong>값을 유틸리티에 직접 박아라</strong>"는 뜻입니다.
+       막는 것은 <u>딱 하나</u> — <code class="inline">--color-*</code> 변수의 내보내기입니다.</p>
+
+    <div class="grid2">
+      <div class="col bad">
+        <h4>@theme (inline 없음)</h4>
+<pre><span class="v">:root</span> {
+  <span class="v">--color-surface-strong</span>: <span class="k">var</span>(<span class="v">--surface-strong</span>);
+}
+<span class="v">.bg-surface-strong</span> {
+  background-color: <span class="k">var</span>(<span class="v">--color-surface-strong</span>);
+}</pre>
+        <p style="font-size:.85rem;color:var(--muted)"><code>--color-surface-strong</code> 이 <code>:root</code>에 존재 → <code>var()</code>로 접근 가능하지만 이중 참조.</p>
+      </div>
+      <div class="col ok">
+        <h4>@theme inline</h4>
+<pre><span class="c">/* --color-* 는 내보내지 않음 */</span>
+<span class="v">.bg-surface-strong</span> {
+  background-color: <span class="k">var</span>(<span class="v">--surface-strong</span>);
+}</pre>
+        <p style="font-size:.85rem;color:var(--muted)"><code>var(--color-surface-strong)</code> 는 <strong>존재하지 않음</strong>. 유틸리티가 원본을 직접 참조.</p>
+      </div>
+    </div>
+
+    <table>
+      <tr><th>변수</th><th>@theme</th><th>@theme inline</th></tr>
+      <tr><td><code>--surface-strong</code> <span style="color:var(--muted)">(:root에 직접 선언한 원본)</span></td><td>존재 ✅</td><td>존재 ✅</td></tr>
+      <tr><td><code>--color-surface-strong</code> <span style="color:var(--muted)">(@theme이 만든 토큰)</span></td><td>:root에 내보냄 ✅</td><td><strong>안 내보냄 ❌</strong></td></tr>
+      <tr><td><code>.bg-surface-strong</code> 참조</td><td><code>var(--color-surface-strong)</code></td><td><code>var(--surface-strong)</code></td></tr>
+    </table>
+
+    <div class="callout key">
+      <span class="tag">왜 막나</span>
+      <p>토큰 변수를 중간에 끼우지 않고 유틸리티가 <strong>원본 <code>--surface-strong</code> 을
+         곧바로 가리키게</strong> 하려는 것. 그래야 <code class="inline">.dark { --surface-strong: ... }</code>
+         로 원본만 바꿨을 때 색이 정확히 따라옵니다.
+         (중간의 <code class="inline">--color-surface-strong</code> 이 <code>:root</code>에
+         한 번 고정 평가되는 것을 피함.)</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section id="s5">
+    <h2><span class="num">5</span><code>inline</code> 없이 다크 테마 + 이중 <code>var()</code> 회피</h2>
+    <p>세 조건을 동시에 원할 때 —
+       ① 이중 <code class="inline">var()</code> 회피,
+       ② 다크 전환 동작,
+       ③ <code class="inline">inline</code> 미사용(<code>--color-*</code> 를 <code>:root</code>에 남김) —
+       해법은 <strong>변수를 두 겹으로 나누지 말고 하나로 합치는 것</strong>입니다.</p>
+
+    <h3>원인: 변수가 2단이라 이중 <code>var()</code> 발생</h3>
+<pre><span class="v">:root</span>         { <span class="v">--surface-strong</span>: <span class="s">#f2f2f2</span>; }                 <span class="c">/* 원본 */</span>
+<span class="k">@theme</span> inline { <span class="v">--color-surface-strong</span>: <span class="k">var</span>(<span class="v">--surface-strong</span>); } <span class="c">/* 토큰이 원본 참조 */</span></pre>
+    <p><code class="inline">inline</code> 을 빼면 이 2단이 그대로 <code>:root</code>에 박혀
+       <code class="inline">var(var())</code> 간접 참조가 됩니다. 근원은 <code>inline</code>이
+       아니라 <strong>변수가 두 겹이라는 사실</strong>.</p>
+
+    <h3>해법: 값을 <code>@theme</code> 에 직접 넣고 <code>.dark</code> 에서 같은 변수를 덮어쓰기</h3>
+<pre><span class="k">@theme</span> {
+  <span class="v">--color-surface-strong</span>: <span class="s">#f2f2f2</span>;   <span class="c">/* 라이트 기본값 (var 아님) */</span>
+}
+
+<span class="v">.dark</span> {
+  <span class="v">--color-surface-strong</span>: <span class="s">#1a1a1a</span>;   <span class="c">/* 같은 변수를 다크 스코프에서 재정의 */</span>
+}</pre>
+    <p>생성 결과는 <code class="inline">.bg-surface-strong { background-color: var(--color-surface-strong) }</code>
+       <strong>한 겹뿐</strong>. CSS 변수는 사용 지점 스코프에서 평가되므로,
+       <code>.dark</code> 안 요소는 자동으로 <code>#1a1a1a</code> 로 해석됩니다.</p>
+
+    <div class="callout good">
+      <span class="tag">✔ 세 조건 모두 충족</span>
+      <p><strong>이중 var 없음</strong> (한 겹 참조) ·
+         <strong>다크 동작</strong> (스코프 재정의) ·
+         <strong>inline 불필요</strong> (<code>--color-*</code> 가 <code>:root</code>에 남아 JS·arbitrary value 접근 가능).</p>
+    </div>
+    <div class="callout warn">
+      <span class="tag">트레이드오프</span>
+      <p>변수를 1단으로 합치면 여러 시맨틱 역할이 같은 팔레트 색을 공유하던 연결이 끊깁니다.
+         → 다음 절의 "2계층" 이점을 포기하게 됩니다. 상황에 맞게 선택.</p>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section id="s6">
+    <h2><span class="num">6</span>팔레트 / 시맨틱 2계층</h2>
+    <p>색 변수에는 성격이 다른 두 종류의 이름이 있습니다.</p>
+
+    <div class="grid2">
+      <div class="col">
+        <h4>① 팔레트 (무슨 색인가)</h4>
+<pre><span class="v">--surface-strong</span>: <span class="s">#f2f2f2</span>; <span class="c">/* 연한 회색 강 */</span>
+<span class="v">--surface-soft</span>:   <span class="s">#f7f7f7</span>; <span class="c">/* 연한 회색 약 */</span>
+<span class="v">--primary</span>:        <span class="s">#3d5af0</span>; <span class="c">/* 코발트 블루 */</span></pre>
+      </div>
+      <div class="col">
+        <h4>② 시맨틱 (어디에 쓰는 색인가)</h4>
+<pre><span class="v">--accent</span>:    <span class="k">var</span>(<span class="v">--surface-strong</span>); <span class="c">/* 강조 배경 */</span>
+<span class="v">--secondary</span>: <span class="k">var</span>(<span class="v">--surface-soft</span>);   <span class="c">/* 보조 배경 */</span>
+<span class="v">--muted</span>:     <span class="k">var</span>(<span class="v">--surface-soft</span>);   <span class="c">/* 음소거 배경 */</span></pre>
+      </div>
+    </div>
+
+    <p><code class="inline">--accent</code>, <code class="inline">--secondary</code>,
+       <code class="inline">--muted</code> 는 서로 다른 <strong>역할</strong>이지만
+       실제로는 같은 팔레트 색을 공유합니다.
+       팔레트를 <strong>진실의 원천(single source of truth)</strong> 으로 두면
+       팔레트 한 곳만 바꿔도 그 색을 쓰는 모든 역할이 함께 바뀝니다.</p>
+
+    <div class="callout warn">
+      <span class="tag">현재 프로젝트는 "반쪽짜리" 2계층</span>
+      <p>지금 <code class="inline">globals.css</code> 는 <code class="inline">--secondary: #f7f7f7</code> 와
+         <code class="inline">--surface-soft: #f7f7f7</code> 를 <strong>각각 리터럴로 중복 기입</strong>하고
+         주석으로만 연결을 표시합니다. 코드상 두 값은 따로 노는 상태 —
+         <code class="inline">var()</code> 로 연결해야 완전한 2계층이 됩니다.</p>
+    </div>
+
+    <h3>완전한 2계층의 이점 (특히 다크 모드)</h3>
+    <p>시맨틱이 팔레트를 참조하면, <code class="inline">.dark</code> 가 시맨틱 ~30개를
+       복붙할 필요 없이 <strong>팔레트만 오버라이드</strong>하면 됩니다. 시맨틱은 자동으로 따라옵니다.</p>
+    <div class="callout key">
+      <span class="tag">요약</span>
+      <p><strong>팔레트</strong> = "무슨 색"(원본) ·
+         <strong>시맨틱</strong> = "어디에 쓰는 색"(역할, 팔레트 참조) ·
+         <strong><code>@theme</code></strong> = 둘을 유틸리티로 노출.
+         관리 편의(한 곳에서 색 제어) ↔ 구조 단순함의 트레이드오프.</p>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section id="s7">
+    <h2><span class="num">7</span>한눈에 보는 요약</h2>
+
+    <h3>계층 흐름</h3>
+    <div class="flow">
+      <div class="step"><span class="lbl">① 팔레트</span><br><code>--surface-strong: #f2f2f2</code><br><span style="color:var(--muted);font-size:.8rem">무슨 색</span></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="lbl">② 시맨틱</span><br><code>--accent: var(--surface-strong)</code><br><span style="color:var(--muted);font-size:.8rem">어디에 쓰나</span></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="lbl">③ @theme</span><br><code>--color-accent: var(--accent)</code><br><span style="color:var(--muted);font-size:.8rem">유틸리티 생성</span></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="lbl">사용</span><br><code>bg-accent</code></div>
+    </div>
+
+    <h3><code>inline</code> 판단 기준</h3>
+    <table>
+      <tr><th>상황</th><th>선택</th></tr>
+      <tr><td>값이 <code>var(--원본)</code> 참조이고 <code>.dark</code> 등으로 원본을 갈아끼운다 (shadcn 방식)</td><td><code>@theme <strong>inline</strong></code> 유지</td></tr>
+      <tr><td>값이 리터럴이다 / <code>var(--color-*)</code> 를 CSS·JS·arbitrary value 로 직접 참조한다</td><td><code>@theme</code> (inline 제거)</td></tr>
+    </table>
+
+    <h3>이번 세션 핵심 3줄</h3>
+    <div class="callout good">
+      <span class="tag">TL;DR</span>
+      <p>1. <code class="inline">@theme</code> 의 <code class="inline">--color-*</code> 가
+         <code class="inline">bg-*</code>/<code class="inline">text-*</code>/<code class="inline">border-*</code> 유틸리티를 자동 생성한다.</p>
+      <p>2. <code class="inline">inline</code> 은 <code class="inline">--color-*</code> 의
+         <code class="inline">:root</code> 내보내기를 끄고 값을 유틸리티에 직접 박아,
+         원본 변수 기반 다크 전환을 정확하게 만든다.</p>
+      <p>3. 팔레트(원본)와 시맨틱(역할)을 <code class="inline">var()</code> 로 연결하면
+         색을 한 곳에서 관리하고 다크 모드 정의가 팔레트 오버라이드만으로 끝난다.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Next.js Practice Lab · Tailwind CSS v4 테마 시스템 학습 노트 ·
+       대상 파일: <code class="inline">src/app/globals.css</code></p>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -3,14 +3,11 @@
  *
  * 새 예제를 추가할 때 이 배열에 항목을 하나 추가하면
  * 홈("/")의 갤러리에 카드가 자동으로 나타납니다.
- * 실제 페이지는 src/app/examples/<slug>/page.tsx 로 만들어 주세요.
+ * 실제 기능은 src/features/<slug>/ 폴더로 만들고,
+ * 라우트는 src/app/examples/<slug>/page.tsx 로 얇게 연결하세요.
  */
 export type ExampleTopic =
-  | "react"
-  | "typescript"
-  | "nextjs"
-  | "shadcn"
-  | "tailwind";
+  "react" | "typescript" | "nextjs" | "shadcn" | "tailwind";
 
 export interface Example {
   /** URL slug. src/app/examples/<slug>/page.tsx 와 일치해야 합니다. */
