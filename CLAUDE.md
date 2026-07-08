@@ -108,7 +108,7 @@ pnpm dlx shadcn@latest add <component>
     ```
 - `@/lib/utils` 의 `cn()` 은 shadcn 컴포넌트가 의존하므로 지우지 말 것.
 
-## 현재 상태 (2026-07-06 기준)
+## 현재 상태 (2026-07-08 기준)
 
 feature-based 스캐폴딩 위에서 **에어비앤비 디자인 시스템**을 구축 중이다.
 `docs/component_design.html` 에서 전역 토큰과 31개 컴포넌트를 shadcn +
@@ -124,18 +124,22 @@ Tailwind v4 + TS 로 재현한다.
 - 예제 01 `counter` (`features/counter`)
 - **디자인 토큰** (`src/app/globals.css`): 컬러/타이포/라디우스/섀도를
   `@theme inline` 로 정의. 다크는 구조만(라이트값 미러).
-- **컴포넌트 01~05 완료**: 버튼, 아이콘 버튼, 인풋, 폼 필드, 텍스트에어리어
-  (`src/components/ui/*`). cva 변형 · inset box-shadow 무리플로우 보더 ·
-  `useId`+`cloneElement` 접근성 자동 배선 패턴 확립.
+- **컴포넌트 01~31 전부 완료** (`src/components/ui/*`). cva 변형 · inset
+  box-shadow 무리플로우 보더 · `useId`+`cloneElement` 접근성 자동 배선 · radix
+  data-state 상태 분기 · 커스텀 SVG 인라인 패턴 확립. `pnpm build` 통과.
+- **쇼케이스 라우트 `/components`** (`src/app/components/page.tsx`): 01~31 을
+  상태별로 모아 확인. (`/test` 는 06·07 집중 점검용으로 유지)
+- `globals.css` 에 `@import "tw-animate-css"` 활성화, `--shadow-elevated` 토큰 추가.
 - **Prettier 세팅 완료** (`.prettierrc.json`, `.prettierignore`,
   format 스크립트, eslint-config-prettier 연결). `pnpm format` 로 정규화.
 
 **다음 할 일**
 
-- [ ] **06 셀렉트** (다음 차례) — 스펙은 진행 문서 참고.
-- [ ] 07~31 나머지 컴포넌트 (로드맵은 진행 문서 표 참고)
+- [ ] 참고 문서 대비 픽셀 정합성 육안 재검토(검색바·리뷰·푸터·데이트피커 등).
+- [ ] 다크 팔레트 채우기(현재 `.dark` 는 라이트값 미러).
+- [ ] 필요 시 컴포넌트를 `features/<slug>` + 레지스트리로 홈 갤러리에 편입.
 
 > 새 세션/새 컴퓨터에서 이어서 하려면: 저장소를 clone → `pnpm install` →
-> 이 `CLAUDE.md` 와 `docs/design-system-progress.md` 를 읽고 로드맵의
-> "다음"부터 **한 컴포넌트씩** 진행한다. (파일 생성·코딩은 사용자가 직접,
-> Claude 는 붙여넣을 코드·설명 제공)
+> 이 `CLAUDE.md` 와 `docs/design-system-progress.md` 를 읽는다. 31개 컴포넌트는
+> 모두 완료됐고 `/components` 쇼케이스에서 확인 가능. 다듬기 항목은 "다음 할 일"
+> 참고. (파일 생성·코딩은 이제 Claude 가 직접 한다 — 복붙 방식 폐기.)

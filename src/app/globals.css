@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 /* next-themes(class 전략) 용 다크 변형 */
 @custom-variant dark (&:is(.dark *));
@@ -119,7 +120,11 @@
   --radius-lg: 20px;
 
   /* ── 엘리베이션 (단일 티어) ── */
-  --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.12); /* card float · 값 추정, 조정 가능 */
+  --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.12); /* 팝오버/셀렉트 메뉴 float */
+  /* "1티어" 그림자: 배지(게스트 선호)·카드·토스트 공용 — 얇은 링 + 부드러운 낙하 */
+  --shadow-elevated:
+    rgba(0, 0, 0, 0.02) 0 0 0 1px, rgba(0, 0, 0, 0.04) 0 2px 6px 0,
+    rgba(0, 0, 0, 0.1) 0 4px 8px 0;
 
   /* ── 타이포그래피 (text-* 유틸리티) ── */
   --text-rating-display: 64px;

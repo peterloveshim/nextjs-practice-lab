@@ -2,7 +2,7 @@
 
 > **다른 컴퓨터에서 이어서 작업하기 위한 인수인계 문서.**
 > 저장소를 clone 한 뒤 이 파일 + `CLAUDE.md` 를 읽으면 어디까지 했고 다음에
-> 무엇을 할지 바로 파악할 수 있다. (최종 갱신: 2026-07-06)
+> 무엇을 할지 바로 파악할 수 있다. (최종 갱신: 2026-07-08)
 
 ## 목표
 
@@ -13,9 +13,10 @@
 
 ## 작업 방식 (중요)
 
-- **파일 생성·코딩은 사용자가 직접 한다.** 나(Claude)는 붙여넣을 코드와
-  설명을 제공하고, **한 번에 컴포넌트 하나씩** 단계적으로 진행한다.
-  - 예외: 도구/환경 설정(Prettier 등)은 내가 직접 수행해도 된다고 합의됨.
+- **파일 생성·코딩은 Claude 가 직접 한다.** (2026-07-08 부로 "코드 제공 →
+  사용자 복붙" 방식은 폐기됨. 01~07 은 그 방식으로, 08~31 은 Claude 가 직접
+  생성.) 규칙은 유지하고, 큰 배치는 병렬 서브에이전트로 나눠 처리한 뒤 중앙에서
+  tsc/eslint/prettier/build 로 검증한다.
 - 다크 모드: 토큰 구조는 지금 넣되 **컬러 값은 라이트와 동일**하게 두고
   나중에 다크 팔레트를 채운다. (`.dark` 블록이 이미 라이트값으로 미러됨)
 - 스타일은 **유틸리티 클래스로 최대한 선언**하고 컴포넌트에서 그 클래스를
@@ -66,6 +67,12 @@ caption-sm 13/400 · badge 11/600 · **tag** 8/700(`uppercase` 는 내장
    하나로 헬퍼 색과 인풋 보더(aria-invalid)를 동시 제어. (`useId` 는
    클라이언트 훅이라 `"use client"` 필요)
 4. **필수 aria** — icon-button 은 타입에서 `aria-label` 을 필수로 강제.
+5. **커스텀 SVG 인라인** — 스펙 path 를 그대로 SVG 로 인라인해 픽셀 일치
+   (lucide 대체). `stroke="currentColor"` 로 색은 부모 `text-*` 가 제어.
+   (checkbox 체크마크: `M2.5 7.5L5.5 10.5 11.5 3.5`)
+6. **radix data-state 상태 분기** — `data-[state=checked|indeterminate]` 로
+   상태별 스타일. Indicator 안에 여러 표시(체크/대시)를 두고
+   `group-data-[state=…]` 로 토글. (checkbox → radio 로 재사용 예정)
 
 ## 컴포넌트 로드맵 (31개)
 
@@ -76,45 +83,51 @@ caption-sm 13/400 · badge 11/600 · **tag** 8/700(`uppercase` 는 내장
 | 03 | 인풋 | ✅ | `components/ui/input.tsx` |
 | 04 | 폼 필드 | ✅ | `components/ui/field.tsx` |
 | 05 | 텍스트에어리어 | ✅ | `components/ui/textarea.tsx` |
-| 06 | **셀렉트** | ⏭️ **다음** | (예정) |
-| 07 | 체크박스 | ⬜ | |
-| 08 | 라디오 | ⬜ | |
-| 09 | 스위치 | ⬜ | |
-| 10 | 슬라이더 | ⬜ | |
-| 11 | 스텝퍼 | ⬜ | |
-| 12 | 배지 | ⬜ | |
-| 13 | 아바타 | ⬜ | |
-| 14 | 카드 | ⬜ | |
-| 15 | 알럿 | ⬜ | |
-| 16 | 토스트 | ⬜ | |
-| 17 | 다이얼로그 | ⬜ | |
-| 18 | 드롭다운 메뉴 | ⬜ | |
-| 19 | 툴팁 | ⬜ | |
-| 20 | 탭 | ⬜ | |
-| 21 | 아코디언 | ⬜ | |
-| 22 | 브레드크럼 | ⬜ | |
-| 23 | 페이지네이션 | ⬜ | |
-| 24 | 테이블 | ⬜ | |
-| 25 | 스켈레톤 | ⬜ | |
-| 26 | 법적 고지 라인 | ⬜ | |
-| 27 | 세퍼레이터 | ⬜ | |
-| 28 | 데이트 피커 | ⬜ | |
-| 29 | 검색바 | ⬜ | |
-| 30 | 리뷰 | ⬜ | |
-| 31 | 푸터 | ⬜ | |
+| 06 | 셀렉트 | ✅ | `components/ui/select.tsx` |
+| 07 | 체크박스 | ✅ | `components/ui/checkbox.tsx` |
+| 08 | 라디오 | ✅ | `components/ui/radio-group.tsx` |
+| 09 | 스위치 | ✅ | `components/ui/switch.tsx` |
+| 10 | 슬라이더 | ✅ | `components/ui/slider.tsx` |
+| 11 | 스텝퍼 | ✅ | `components/ui/stepper.tsx` |
+| 12 | 배지 | ✅ | `components/ui/badge.tsx` |
+| 13 | 아바타 | ✅ | `components/ui/avatar.tsx` |
+| 14 | 카드 | ✅ | `components/ui/card.tsx` |
+| 15 | 알럿 | ✅ | `components/ui/alert.tsx` |
+| 16 | 토스트 | ✅ | `components/ui/sonner.tsx` (sonner) |
+| 17 | 다이얼로그 | ✅ | `components/ui/dialog.tsx` |
+| 18 | 드롭다운 메뉴 | ✅ | `components/ui/dropdown-menu.tsx` |
+| 19 | 툴팁 | ✅ | `components/ui/tooltip.tsx` |
+| 20 | 탭 | ✅ | `components/ui/tabs.tsx` |
+| 21 | 아코디언 | ✅ | `components/ui/accordion.tsx` |
+| 22 | 브레드크럼 | ✅ | `components/ui/breadcrumb.tsx` |
+| 23 | 페이지네이션 | ✅ | `components/ui/pagination.tsx` |
+| 24 | 테이블 | ✅ | `components/ui/table.tsx` |
+| 25 | 스켈레톤 | ✅ | `components/ui/skeleton.tsx` |
+| 26 | 법적 고지 라인 | ✅ | `components/ui/legal-line.tsx` |
+| 27 | 세퍼레이터 | ✅ | `components/ui/separator.tsx` |
+| 28 | 데이트 피커 | ✅ | `components/ui/date-picker.tsx` (+ `popover.tsx`) |
+| 29 | 검색바 | ✅ | `components/ui/search-bar.tsx` |
+| 30 | 리뷰 | ✅ | `components/ui/review.tsx` |
+| 31 | 푸터 | ✅ | `components/ui/footer.tsx` |
 
-## 다음 작업 — 06 셀렉트 (Select)
+## 상태 — 전체 완료 🎉 (2026-07-08)
 
-`component_design.html` 의 셀렉트 스펙:
+**31개 컴포넌트를 모두 구현**했다. `pnpm build` 통과(정적 생성 OK).
 
-- **트리거**: 인풋과 동일 스펙(h-14, `rounded-sm`, inset box-shadow 보더,
-  focus/error 상태 동일). 우측에 셰브론 아이콘 12px.
-- **열린 메뉴**: `rounded-md`(14px), 세로 패딩 8px.
-- **아이템**: 패딩 12×16, `text-body-sm`. hover 배경 `#f7f7f7`(surface-soft).
-- **선택된 아이템**: 체크 표시 + font-weight 500.
-- **비활성**: 텍스트 `#929292`(muted-soft).
-- radix-ui 의 Select 프리미티브 기반으로, input/textarea 의 inset
-  box-shadow 무리플로우 보더 패턴을 재사용한다.
+- 확인 라우트: **`/components`** (`src/app/components/page.tsx`) — 01~31 을 상태별로
+  모아 둔 쇼케이스. (`/test` 는 06·07 집중 점검용으로 유지)
+- 08~31 은 병렬 서브에이전트로 스펙 추출 + 파일 생성 후, 중앙에서 tsc/eslint/
+  prettier/`pnpm build` 로 검증했다.
+- **작업 방식 변경**: 이제 컴포넌트 파일은 **Claude 가 직접 생성**한다(복붙 폐기).
+- 곁들여 처리: `icon-button.tsx`(빈 파일이었음) 02번 재작성 · `globals.css` 에
+  `@import "tw-animate-css"` 활성화(오버레이/메뉴 애니메이션) · `--shadow-elevated`
+  토큰 추가(guest-favorite 배지/카드) · badge 변형 개편(`secondary`→`neutral`,
+  gallery 사용처 수정).
+
+### 남은 다듬기 (선택)
+- 참고 문서 대비 픽셀 정합성 육안 재검토(특히 검색바·리뷰·푸터·데이트피커).
+- 다크 팔레트 채우기(현재 `.dark` 는 라이트값 미러).
+- 필요 시 `features/<slug>` + `example-registry` 로 홈 갤러리에 편입.
 
 ## 도구/환경 설정 (완료)
 

@@ -4,32 +4,46 @@ import { Slot } from "radix-ui";
 
 import { cn } from "@/lib/utils";
 
+/**
+ * 배지 (Badge) — 에어비앤비 디자인 시스템 12
+ *
+ * 배우는 것:
+ * - cva 로 배지 색/모양 변형을 한 곳에 모으기
+ * - 알약형(rounded-full) 라벨 · badge 타이포(11/600) 토큰 소비
+ * - "게스트 선호" 배지의 1티어 그림자(--shadow-elevated) 재현
+ * - tag 변형은 padding·타이포(text-tag 8/700, uppercase)를 base 위에 덮어쓰기
+ *
+ * 스펙: pad 4×10 · badge 11/600 · r-full
+ *   · guest-favorite bg #FFF + 그림자 1티어
+ *   · ink bg #222/text #FFF · promo bg #3D5AF0 · neutral bg #F7F7F7/text #6A6A6A
+ *   · new 태그 pad 2×6 · border #DDD · uppercase-tag 8/700 ls .32
+ */
 const badgeVariants = cva(
-  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  "inline-flex w-fit shrink-0 items-center justify-center gap-1 rounded-full border border-transparent px-2.5 py-1 text-badge whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
-        secondary:
-          "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
-        destructive:
-          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
-        outline:
-          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
-        ghost:
-          "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
-        link: "text-primary underline-offset-4 hover:underline",
+        // 중립 회색 태그 (마감 등)
+        neutral: "bg-surface-soft text-muted-foreground",
+        // 게스트 선호: 흰 배경 + 1티어 그림자
+        "guest-favorite": "bg-background text-foreground shadow-elevated",
+        // 강조: 잉크 배경 (슈퍼호스트 등)
+        ink: "bg-foreground text-background",
+        // 프로모션: 코발트 블루 — 절제해서 사용
+        promo: "bg-primary text-primary-foreground",
+        // New 태그: 얇은 테두리 + 초소형 대문자 타이포
+        tag: "border-hairline bg-background px-1.5 py-0.5 text-tag text-foreground uppercase",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "neutral",
     },
   },
 );
 
 function Badge({
   className,
-  variant = "default",
+  variant = "neutral",
   asChild = false,
   ...props
 }: React.ComponentProps<"span"> &

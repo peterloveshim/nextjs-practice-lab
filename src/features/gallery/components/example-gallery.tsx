@@ -36,7 +36,7 @@ export function ExampleGallery() {
                 <CardDescription>{example.description}</CardDescription>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {example.topics.map((topic) => (
-                    <Badge key={topic} variant="secondary">
+                    <Badge key={topic} variant="neutral">
                       {topic}
                     </Badge>
                   ))}
